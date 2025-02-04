@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Animation</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400" style="border:1px solid black;"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const squareSize = 20;
+
+        const squares = [
+            { x: 0, y: 0, color: 'red', dx: 1, dy: 1 },
+            { x: 200, y: 0, color: 'green', dx: 0, dy: 1 },
+            { x: 0, y: 200, color: 'blue', dx: 1, dy: 0 }
+        ];
+
+        function animate(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            squares.forEach((sq) => {
+                ctx.fillStyle = sq.color
+                ctx.fillRect(sq.x, sq.y, squareSize, squareSize)
+                sq.x += sq.dx
+                sq.y += sq.dy
+                sq.x + squareSize > canvas.width || sq.x < 0 ? sq.dx *= -1 : ''
+                sq.y + squareSize > canvas.height || sq.y < 0 ? sq.dy *= -1 : ''
+            })
+            requestAnimationFrame(animate)
+        }
+
+        animate()
+    </script>
+</body>
+</html>
