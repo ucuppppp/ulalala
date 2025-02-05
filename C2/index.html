@@ -4,17 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rain Forest</title>
+    <style>
+        body{
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <canvas id="canvas" style="width: 600px;height: 500px;border: black solid 1px;"></canvas>
     <script>
         const canvas = document.getElementById('canvas')
         const ctx = canvas.getContext('2d')
+        canvas.width = 600;
+        canvas.height = 500;
+        const rainWidth = 2.5 
+        const rainHeight = 80
+        const dropSpeed = 4
+        const raindrops = []
+        let frame = 0;
 
-        const animate = () =>{
+        const animate = () => {
+            frame++
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.font = 'bold 50px Arial'
+            ctx.strokeText("Rain Forest", canvas.width / 3.5, canvas.height/2)
+            
+            for(let i = 0; i < raindrops.length; i++ ){
+                ctx.fillStyle="black"
+                ctx.fillRect(raindrops[i].x, raindrops[i].y, rainWidth, rainHeight)
+                raindrops[i].y += dropSpeed
+                if(raindrops[i].y > canvas.height){
+                    raindrops.splice(i, 1)
+                }
+            };
+            
+            if(frame % 6 === 0){
+                raindrops.push({x: Math.random() * canvas.width, y: -rainHeight})
+            }
 
+            requestAnimationFrame(animate)
         }
 
+        animate()
 
     </script>
 </body>

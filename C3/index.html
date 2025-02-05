@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Data</title>
+    <style>
+      body {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f4f4f4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Live Data: <span class="live-data"></span>%</h1>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const liveDataText = document.querySelector('.live-data')
+      const ctx = canvas.getContext("2d");
+      canvas.width = 500;
+      canvas.height = 300;
+      const padding = 30;
+      const startY = canvas.height - padding;
+      const startX = canvas.width - padding;
+      const chartHeight = canvas.height - (2 * padding);
+      let frame = 0;
+      let maxData = 20;
+      let dataStore = [];
+      
+      const label = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"];
+      const labelHeight = chartHeight / (label.length - 1);
+      
+      function drawBorder() {
+        ctx.strokeStyle = "green";
+
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, canvas.height - padding);
+        ctx.lineTo(canvas.width - padding, canvas.height - padding);
+        ctx.lineTo(canvas.width - padding, padding)
+        ctx.lineTo(padding, padding)
+        ctx.stroke();
+
+        ctx.font = "10px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "left";
+
+        for (let i = 0; i < label.length; i++) {
+          let y = canvas.height - padding - i * labelHeight;
+          ctx.fillText(label[i], startX + 5, y + 3);
+          ctx.strokeStyle = "rgba(0,0,0,0.2)";
+          ctx.beginPath();
+          ctx.moveTo(padding, y);
+          ctx.lineTo(canvas.width - padding, y);
+          ctx.stroke();
+        }
+      }
+
+      function generateData() {
+        return Math.floor(Math.random() * 100);
+      }
+
+      function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBorder();
+
+    ctx.strokeStyle = "green";
+    ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
+    
+    ctx.beginPath();
+
+    let firstX = startX - ((dataStore.length - 1) * (canvas.width - 2 * padding) / (maxData - 1));
+    let lastX = startX;
+
+    for (let i = 0; i < dataStore.length; i++) {
+        let x = startX - ((dataStore.length - 1 - i) * (canvas.width - 2 * padding) / (maxData - 1));
+        let y = canvas.height - padding - (dataStore[i] / 100) * chartHeight;
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+
+    ctx.lineTo(lastX, startY); 
+    ctx.lineTo(firstX, startY);
+    ctx.closePath();
+
+    ctx.fill(); 
+    ctx.stroke(); 
+
+    if (frame % 120 === 0) { 
+        let data = generateData()
+        liveDataText.textContent = data
+        dataStore.push(data);
+        if (dataStore.length > maxData) {
+            dataStore.shift(); 
+        }
+    }
+
+    frame++;
+    requestAnimationFrame(animate);
+}
+
+
+      animate();
+    </script>
+  </body>
+</html>
